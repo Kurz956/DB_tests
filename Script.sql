@@ -263,7 +263,44 @@ join crosscollection c2 on c.id = c2.collection_id
 join track t on c2.track_id = t.track_id 
 join album a on t.album_id = a.album_id 
 join artist a2 on a.artist_id = a2.artist_id 
-where a2.nickname like '%Ozzy%'
+where a2.nickname like '%Ozzy%';
+-------------Названия альбомов, в которых присутствуют исполнители более чем одного жанра.
+insert into collection
+values(4, 'Eminem and Ozzy', 2023);
+insert into collection
+values(5, 'County-Roll', 2021);
+
+insert into crosscollection 
+values(11, 4);
+insert into crosscollection 
+values(12, 4);
+insert into crosscollection 
+values(13, 4);
+insert into crosscollection 
+values(1, 4);
+insert into crosscollection 
+values(2, 4);
+insert into crosscollection 
+values(3, 4);
+insert into crosscollection 
+values(4, 4);
+
+select c."name"  from collection c 
+join crosscollection c2 on c2.collection_id = c.id 
+join track t on t.track_id = c2.track_id 
+join album a on a.album_id = t.album_id 
+join artist a2 on a2.artist_id = a.album_id 
+join genreartist g on a2.genre_id = g.artist_id 
+join genre g2 on g2.genre_id = g.genre_id
+group by c."name" 
+having  count(g2.genre_id) > 1;
+
+-------------Наименования треков, которые не входят в сборники.
+select distinct name from track t 
+join crosscollection c on c.track_id = t.track_id 
+where not (t.track_id = c.track_id) 
+-------------Исполнитель или исполнители, написавшие самый короткий по продолжительности трек, — теоретически таких треков может быть несколько.
+-------------Названия альбомов, содержащих наименьшее количество треков.
 
 
 
